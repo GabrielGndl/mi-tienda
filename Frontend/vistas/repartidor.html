@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Repartidor - Mi Tienda</title>
+    <style>
+        :root {
+          --primary: #73c6b6;
+          --primary-dark: #5aa895;
+          --secondary: #abebc6;
+          --light: #f8f9fa;
+          --dark: #2c3e50;
+          --gray: #95a5a6;
+          --success: #27ae60;
+          --warning: #f39c12;
+          --danger: #e74c3c;
+          --info: #3498db;
+          --font-main: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: #f5f9f8;
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9f0ee;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .user-info p i {
+            font-size: 0.7rem;
+            color: var(--success);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(115, 198, 182, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .menu-item.active {
+            background-color: rgba(115, 198, 182, 0.2);
+            color: var(--primary-dark);
+            border-left: 4px solid var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9f0ee;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: #f8fafc;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(115, 198, 182, 0.2);
+            background-color: white;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn, .messages-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .notification-badge, .messages-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .messages-badge {
+            background-color: var(--info);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .user-menu img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background-color: #f5f9f8;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stats-icon.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .stats-icon.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #e67e22 100%);
+        }
+
+        .stats-icon.success {
+            background: linear-gradient(135deg, var(--success) 0%, #219653 100%);
+        }
+
+        .stats-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-info p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* Current Delivery */
+        .current-delivery {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-header h2 i {
+            color: var(--primary);
+        }
+
+        .delivery-steps {
+            display: flex;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e6ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            color: var(--dark);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.active .step-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .step.active .step-title {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .step.completed .step-title {
+            color: var(--success);
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e6ed;
+            z-index: 1;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--success);
+            width: 50%; /* Esto debería ser dinámico según el progreso */
+            transition: var(--transition);
+        }
+
+        .delivery-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .delivery-map {
+            height: 300px;
+            background: #e0e6ed;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .delivery-map img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .map-overlay {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .map-overlay button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .delivery-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9f0ee;
+        }
+
+        .info-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p {
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-card p strong {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .info-card p span {
+            text-align: right;
+        }
+
+        .delivery-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(115, 198, 182, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(115, 198, 182, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Delivery History */
+        .delivery-history {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            color: var(--dark);
+            font-weight: 600;
+            border-bottom: 2px solid #e9f0ee;
+        }
+
+        .history-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e9f0ee;
+            vertical-align: middle;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tr:hover {
+            background: rgba(115, 198, 182, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-completed {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .status-cancelled {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        /* Messages Panel */
+        .messages-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-panel.open {
+            right: 0;
+        }
+
+        .messages-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e9f0ee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messages-header h3 {
+            font-size: 1.25rem;
+            color: var(--dark);
+        }
+
+        .close-messages {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .message-item:hover {
+            background: #f8fafc;
+        }
+
+        .message-item.unread {
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .message-preview {
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .message-input {
+            padding: 1rem;
+            border-top: 1px solid #e9f0ee;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .message-input button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Notifications Panel */
+        .notifications-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notifications-panel.open {
+            right: 0;
+        }
+
+        .notifications-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e9f0ee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notifications-header h3 {
+            font-size: 1.25rem;
+            color: var(--dark);
+        }
+
+        .close-notifications {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .notifications-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .notification-item.unread {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+        }
+
+        .notification-item:hover {
+            background: rgba(115, 198, 182, 0.05);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .delivery-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .messages-panel, .notifications-panel {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .delivery-steps {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            
+            .step {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                text-align: left;
+                padding-bottom: 0;
+                width: 100%;
+            }
+            
+            .progress-line {
+                display: none;
+            }
+            
+            .delivery-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-card, .current-delivery, .delivery-history {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Repartidor">
+            <div class="user-info">
+                <h3>Carlos Mendoza</h3>
+                <p><i class="fas fa-circle"></i> En línea</p>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-motorcycle"></i> Mis Entregas
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-history"></i> Historial
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-wallet"></i> Ganancias
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-map-marked-alt"></i> Zonas
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cog"></i> Configuración
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="btn btn-danger" style="width: 100%;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="menu-toggle" style="background: none; border: none; font-size: 1.5rem; color: var(--dark); display: none;">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Buscar entregas, clientes...">
+            </div>
+            
+            <div class="top-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="messages-btn">
+                    <i class="fas fa-envelope"></i>
+                    <span class="messages-badge">5</span>
+                </button>
+                <div class="user-menu">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuario">
+                    <span>Carlos M.</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Stats -->
+            <div class="dashboard">
+                <div class="stats-card">
+                    <div class="stats-icon primary">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3>12</h3>
+                        <p>Entregas hoy</p>
+                    </div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-icon warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3>3</h3>
+                        <p>En progreso</p>
+                    </div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-icon success">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3>245.50 bs.</h3>
+                        <p>Ganancias hoy</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Delivery -->
+            <div class="current-delivery">
+                <div class="section-header">
+                    <h2><i class="fas fa-shipping-fast"></i> Entrega Actual</h2>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-phone-alt"></i> Llamar al cliente
+                    </button>
+                </div>
+                
+                <div class="delivery-steps">
+                    <div class="progress-line">
+                        <div class="progress-line-fill"></div>
+                    </div>
+                    
+                    <div class="step completed">
+                        <div class="step-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="step-title">Recogida</div>
+                    </div>
+                    
+                    <div class="step active">
+                        <div class="step-icon">
+                            <i class="fas fa-motorcycle"></i>
+                        </div>
+                        <div class="step-title">En camino</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="step-title">Entrega</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="step-title">Completado</div>
+                    </div>
+                </div>
+                
+                <div class="delivery-details">
+                    <div class="delivery-map">
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?center=19.4326,-99.1332&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C19.4326,-99.1332&key=YOUR_API_KEY" alt="Mapa de entrega">
+                        <div class="map-overlay">
+                            <span><i class="fas fa-clock"></i> 15 min estimados</span>
+                            <button id="openMaps">
+                                <i class="fas fa-map-marked-alt"></i> Abrir en Maps
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="delivery-info">
+                        <div class="info-card">
+                            <h3><i class="fas fa-info-circle"></i> Información del Pedido</h3>
+                            <p>
+                                <strong>N° Pedido:</strong>
+                                <span>#ORD-7842</span>
+                            </p>
+                            <p>
+                                <strong>Hora de recogida:</strong>
+                                <span>14:30 PM</span>
+                            </p>
+                            <p>
+                                <strong>Hora estimada:</strong>
+                                <span>15:15 PM</span>
+                            </p>
+                            <p>
+                                <strong>Método de pago:</strong>
+                                <span>Efectivo</span>
+                            </p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-user"></i> Información del Cliente</h3>
+                            <p>
+                                <strong>Nombre:</strong>
+                                <span>María González</span>
+                            </p>
+                            <p>
+                                <strong>Teléfono:</strong>
+                                <span>+52 55 1234 5678</span>
+                            </p>
+                            <p>
+                                <strong>Dirección:</strong>
+                                <span>Calle Reforma #123, Col. Centro, CDMX</span>
+                            </p>
+                            <p>
+                                <strong>Instrucciones:</strong>
+                                <span>Timbre blanco, departamento 3B</span>
+                            </p>
+                        </div>
+                        
+                        <div class="delivery-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-check"></i> Marcar como entregado
+                            </button>
+                            <button class="btn btn-danger">
+                                <i class="fas fa-times"></i> Reportar problema
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Delivery History -->
+            <div class="delivery-history">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Historial Reciente</h2>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+                
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>N° Pedido</th>
+                            <th>Cliente</th>
+                            <th>Hora</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#ORD-7839</td>
+                            <td>Juan Pérez</td>
+                            <td>13:45 PM</td>
+                            <td>125.50 bs.</td>
+                            <td><span class="status-badge status-completed">Completado</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i> Detalles
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7838</td>
+                            <td>Ana Sánchez</td>
+                            <td>13:20 PM</td>
+                            <td>89.00 bs.</td>
+                            <td><span class="status-badge status-completed">Completado</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i> Detalles
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7835</td>
+                            <td>Luis Ramírez</td>
+                            <td>12:30 PM</td>
+                            <td>156.75 bs.</td>
+                            <td><span class="status-badge status-completed">Completado</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i> Detalles
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7832</td>
+                            <td>Laura Gómez</td>
+                            <td>11:45 AM</td>
+                            <td>72.30 bs.</td>
+                            <td><span class="status-badge status-cancelled">Cancelado</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i> Detalles
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Messages Panel -->
+    <div class="messages-panel">
+        <div class="messages-header">
+            <h3><i class="fas fa-envelope"></i> Mensajes</h3>
+            <button class="close-messages">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="messages-list">
+            <div class="message-item unread">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Usuario" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">María González</span>
+                        <span class="message-time">Hace 15 min</span>
+                    </div>
+                    <p class="message-preview">Hola, ¿podrías traer también una botella de agua? La agregaré al pago...</p>
+                </div>
+            </div>
+            
+            <div class="message-item unread">
+                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Usuario" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">Soporte Mi Tienda</span>
+                        <span class="message-time">Hace 1 hora</span>
+                    </div>
+                    <p class="message-preview">Recordatorio: Reunión de repartidores mañana a las 10 AM en la oficina...</p>
+                </div>
+            </div>
+            
+            <div class="message-item">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Usuario" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">Ana Martínez</span>
+                        <span class="message-time">Ayer</span>
+                    </div>
+                    <p class="message-preview">Gracias por la entrega rápida! Todo llegó en perfecto estado...</p>
+                </div>
+            </div>
+            
+            <div class="message-item">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Usuario" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">Juan Rodríguez</span>
+                        <span class="message-time">Ayer</span>
+                    </div>
+                    <p class="message-preview">Confirmación: El pedido #ORD-7821 ha sido entregado con éxito...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="message-input">
+            <input type="text" placeholder="Escribe un mensaje...">
+            <button><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    
+    <!-- Notifications Panel -->
+    <div class="notifications-panel">
+        <div class="notifications-header">
+            <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+            <button class="close-notifications">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-title">Nueva entrega asignada</div>
+                <div class="notification-message">Tienes un nuevo pedido para entregar en Col. Roma. #ORD-7842</div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> Hace 30 minutos
+                </div>
+            </div>
+            
+            <div class="notification-item unread">
+                <div class="notification-title">Recordatorio de pago</div>
+                <div class="notification-message">Recuerda cobrar $245.50 al cliente por el pedido #ORD-7842</div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> Hace 1 hora
+                </div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-title">Entrega completada</div>
+                <div class="notification-message">El pedido #ORD-7839 ha sido marcado como entregado con éxito</div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> Hoy, 13:45 PM
+                </div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-title">Actualización de zona</div>
+                <div class="notification-message">Nuevas zonas de cobertura agregadas en tu área. Revisa el mapa</div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> Ayer, 18:30 PM
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+    
+    <script>
+        // Toggle Sidebar on Mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.overlay').classList.toggle('active');
+        });
+        
+        // Close Sidebar when clicking overlay
+        document.querySelector('.overlay').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.remove('open');
+            this.classList.remove('active');
+        });
+        
+        // Toggle Messages Panel
+        document.querySelector('.messages-btn').addEventListener('click', function() {
+            document.querySelector('.messages-panel').classList.toggle('open');
+            document.querySelector('.overlay').classList.toggle('active');
+        });
+        
+        // Close Messages Panel
+        document.querySelector('.close-messages').addEventListener('click', function() {
+            document.querySelector('.messages-panel').classList.remove('open');
+            document.querySelector('.overlay').classList.remove('active');
+        });
+        
+        // Toggle Notifications Panel
+        document.querySelector('.notification-btn').addEventListener('click', function() {
+            document.querySelector('.notifications-panel').classList.toggle('open');
+            document.querySelector('.overlay').classList.toggle('active');
+        });
+        
+        // Close Notifications Panel
+        document.querySelector('.close-notifications').addEventListener('click', function() {
+            document.querySelector('.notifications-panel').classList.remove('open');
+            document.querySelector('.overlay').classList.remove('active');
+        });
+        
+        // Open Maps Integration
+        document.getElementById('openMaps').addEventListener('click', function() {
+            // En una aplicación real, esto abriría Google Maps con las coordenadas del destino
+            alert('Abriendo Google Maps con la dirección de entrega...');
+            // window.open('https://www.google.com/maps/dir/?api=1&destination=19.4326,-99.1332');
+        });
+        
+        // Mark as delivered
+        document.querySelector('.delivery-actions .btn-primary').addEventListener('click', function() {
+            if (confirm('¿Confirmas que has entregado el pedido al cliente?')) {
+                alert('Pedido marcado como entregado. Gracias por tu servicio!');
+                // Aquí iría la lógica para actualizar el estado en el backend
+            }
+        });
+        
+        // Report problem
+        document.querySelector('.delivery-actions .btn-danger').addEventListener('click', function() {
+            const problem = prompt('Describe el problema encontrado:');
+            if (problem) {
+                alert('Problema reportado. El equipo de soporte se pondrá en contacto contigo.');
+                // Aquí iría la lógica para enviar el reporte al backend
+            }
+        });
+        
+        // Responsive adjustments
+        function checkScreenSize() {
+            if (window.innerWidth < 992) {
+                document.querySelector('.menu-toggle').style.display = 'block';
+            } else {
+                document.querySelector('.menu-toggle').style.display = 'none';
+                document.querySelector('.sidebar').classList.remove('open');
+                document.querySelector('.overlay').classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize();
+        
+        // Simulate real-time updates
+        setInterval(() => {
+            const badge = document.querySelector('.notification-badge');
+            const count = parseInt(badge.textContent);
+            if (count < 5) {
+                badge.textContent = count + 1;
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
